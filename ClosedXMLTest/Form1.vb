@@ -3,8 +3,52 @@
 Public Class Form1
     Private Sub Load_Click(sender As Object, e As EventArgs) Handles Load.Click
 
+        Dim excelData As DataTable = Me.getExcel("dummy.xlsx", "target")
+
+        ' プロジェクト名とリソースIDのプレフィックス
+        Dim projects As New Dictionary(Of String, String) From {{"ExeProject", "E"},
+                                                                {"WinMultiLanguageTest", "W"}}
+        ' プロジェクト名ごとの画面IDのカウント
+        Dim projectCount As New Dictionary(Of String, Integer)
+
+        ' プロジェクトID+画面名の画面ID
+        Dim screens As New Dictionary(Of String, Integer)
+
+        ' プロジェクトID+画面名ごとのプロパティのカウント
+        Dim properties As New Dictionary(Of String, Integer)
+
+        ' 初期値設定
+        For Each projectId As String In projects.Values
+            projectCount.Add(projectId, 1)
+        Next
+
+        For Each row As DataRow In excelData.Rows
+
+            ' プロジェクトIDを取得
+            Dim projectId As String = projects(row("プロジェクト"))
+
+            ' 画面名の設定確認と初期値設定
+            Dim screenKey As String = projectId & row("画面名")
+            If Not screens.Keys.Contains(screenKey) Then
+                screens.Add(screenKey, projectCount(projectId))
+                projectCount(projectId) = projectCount(projectId) + 1
+                properties.Add(screenKey, 0)
+            End If
+
+            ' 画面IDを取得
+            Dim screenId As String = String.Format("{0:0000}", screens(screenKey))
+
+            ' コントロールIDを取得
+            Dim propertyId As String = String.Format("P{0:0000}", properties(screenKey))
+            properties(screenKey) = properties(screenKey) + 1
+
+            ' リソースIDの設定
+            row("リソースID") = projectId & screenId & propertyId
+        Next
+
+
         ' DataGridViewに設定
-        Me.DataGridView1.DataSource = Me.getExcel("dummy.xlsx", "target")
+        Me.DataGridView1.DataSource = excelData
 
     End Sub
 
