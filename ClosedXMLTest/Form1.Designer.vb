@@ -43,9 +43,9 @@ Partial Class Form1
         '
         Me.Load.Location = New System.Drawing.Point(24, 27)
         Me.Load.Name = "Load"
-        Me.Load.Size = New System.Drawing.Size(75, 23)
+        Me.Load.Size = New System.Drawing.Size(151, 23)
         Me.Load.TabIndex = 1
-        Me.Load.Text = "読み込み"
+        Me.Load.Text = "読み込み(リソースID設定)"
         Me.Load.UseVisualStyleBackColor = True
         '
         'Form1
