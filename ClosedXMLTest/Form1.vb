@@ -22,13 +22,22 @@ Public Class Form1
             projectCount.Add(projectId, 1)
         Next
 
+        ' 複数の画面名を同一画面として扱う設定
+        Dim convertScreenNames As New Dictionary(Of String, String)()
+        convertScreenNames.Add("WMainForm", "WForm1") ' サンプルとしてMainFormをForm1としてIDを設定する
+
         For Each row As DataRow In excelData.Rows
 
             ' プロジェクトIDを取得
             Dim projectId As String = projects(row("プロジェクト"))
 
-            ' 画面名の設定確認と初期値設定
+            ' 複数の画面名を同一画面として扱うか確認と設定
             Dim screenKey As String = projectId & row("画面名")
+            If convertScreenNames.Keys.Contains(screenKey) Then
+                screenKey = convertScreenNames(screenKey)
+            End If
+
+            ' 画面名の設定確認と初期値設定
             If Not screens.Keys.Contains(screenKey) Then
                 screens.Add(screenKey, projectCount(projectId))
                 projectCount(projectId) = projectCount(projectId) + 1
