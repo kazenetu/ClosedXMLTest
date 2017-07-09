@@ -1,6 +1,12 @@
 ﻿Imports ClosedXML.Excel
 
 Public Class Form1
+
+    ''' <summary>
+    ''' リソースID設定付ロード
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub Load_Click(sender As Object, e As EventArgs) Handles Load.Click
 
         Dim excelData As DataTable = Me.getExcel("dummy.xlsx", "target")
@@ -62,6 +68,16 @@ Public Class Form1
     End Sub
 
     ''' <summary>
+    ''' リソースID設定なしロード
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Private Sub LoadNoID_Click(sender As Object, e As EventArgs) Handles LoadNoID.Click
+        ' DataGridViewに設定
+        Me.DataGridView1.DataSource = Me.getExcel("dummy.xlsx", "target")
+    End Sub
+
+    ''' <summary>
     ''' Excelファイルのシートを読み込む
     ''' </summary>
     ''' <param name="fileName">Excelファイル名</param>
@@ -110,4 +126,5 @@ Public Class Form1
 
         Return result
     End Function
+
 End Class

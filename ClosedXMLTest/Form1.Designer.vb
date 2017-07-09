@@ -24,6 +24,7 @@ Partial Class Form1
     Private Sub InitializeComponent()
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.Load = New System.Windows.Forms.Button()
+        Me.LoadNoID = New System.Windows.Forms.Button()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -48,11 +49,21 @@ Partial Class Form1
         Me.Load.Text = "読み込み(リソースID設定)"
         Me.Load.UseVisualStyleBackColor = True
         '
+        'LoadNoID
+        '
+        Me.LoadNoID.Location = New System.Drawing.Point(24, 57)
+        Me.LoadNoID.Name = "LoadNoID"
+        Me.LoadNoID.Size = New System.Drawing.Size(151, 23)
+        Me.LoadNoID.TabIndex = 2
+        Me.LoadNoID.Text = "読み込み"
+        Me.LoadNoID.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(604, 397)
+        Me.Controls.Add(Me.LoadNoID)
         Me.Controls.Add(Me.Load)
         Me.Controls.Add(Me.DataGridView1)
         Me.Name = "Form1"
@@ -64,4 +75,5 @@ Partial Class Form1
 
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Load As Button
+    Friend WithEvents LoadNoID As Button
 End Class
