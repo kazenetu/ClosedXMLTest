@@ -25,6 +25,7 @@ Partial Class Form1
         Me.DataGridView1 = New System.Windows.Forms.DataGridView()
         Me.Load = New System.Windows.Forms.Button()
         Me.LoadNoID = New System.Windows.Forms.Button()
+        Me.SaveLoad = New System.Windows.Forms.Button()
         CType(Me.DataGridView1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -58,11 +59,21 @@ Partial Class Form1
         Me.LoadNoID.Text = "読み込み"
         Me.LoadNoID.UseVisualStyleBackColor = True
         '
+        'SaveLoad
+        '
+        Me.SaveLoad.Location = New System.Drawing.Point(404, 27)
+        Me.SaveLoad.Name = "SaveLoad"
+        Me.SaveLoad.Size = New System.Drawing.Size(133, 23)
+        Me.SaveLoad.TabIndex = 3
+        Me.SaveLoad.Text = "書き込みと読み込み"
+        Me.SaveLoad.UseVisualStyleBackColor = True
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(604, 397)
+        Me.Controls.Add(Me.SaveLoad)
         Me.Controls.Add(Me.LoadNoID)
         Me.Controls.Add(Me.Load)
         Me.Controls.Add(Me.DataGridView1)
@@ -76,4 +87,5 @@ Partial Class Form1
     Friend WithEvents DataGridView1 As DataGridView
     Friend WithEvents Load As Button
     Friend WithEvents LoadNoID As Button
+    Friend WithEvents SaveLoad As Button
 End Class

@@ -11,6 +11,45 @@ Public Class Form1
 
         Dim excelData As DataTable = Me.getExcel("dummy.xlsx", "target")
 
+        ' DataGridViewに設定
+        Me.DataGridView1.DataSource = Me.setResouceId(excelData)
+
+    End Sub
+
+    ''' <summary>
+    ''' リソースID設定なしロード
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Private Sub LoadNoID_Click(sender As Object, e As EventArgs) Handles LoadNoID.Click
+        ' DataGridViewに設定
+        Me.DataGridView1.DataSource = Me.getExcel("dummy.xlsx", "target")
+    End Sub
+
+    ''' <summary>
+    ''' 書き込みと読み込み
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Private Sub SaveLoad_Click(sender As Object, e As EventArgs) Handles SaveLoad.Click
+        Dim excelData As DataTable = Me.setResouceId(Me.getExcel("dummy.xlsx", "target"))
+
+        ' リソースIDを設定したxlsxファイルを別名保存
+        Me.saveExcel("dummy.xlsx", "target", excelData, "dummycopy.xlsx", New List(Of String)() From {"リソースID"})
+
+        ' 別名保存したファイルをDataGridViewに設定
+        Me.DataGridView1.DataSource = Me.getExcel("dummycopy.xlsx", "target")
+
+    End Sub
+
+    ''' <summary>
+    ''' リソースIDの設定
+    ''' </summary>
+    ''' <param name="src">対象データ</param>
+    ''' <returns>リソースID付データ</returns>
+    Private Function setResouceId(ByVal src As DataTable) As DataTable
+        Dim excelData As DataTable = src.Copy()
+
         ' プロジェクト名とリソースIDのプレフィックス
         Dim projects As New Dictionary(Of String, String) From {{"ExeProject", "E"},
                                                                 {"WinMultiLanguageTest", "W"}}
@@ -61,21 +100,8 @@ Public Class Form1
             row("リソースID") = projectId & screenId & propertyId
         Next
 
-
-        ' DataGridViewに設定
-        Me.DataGridView1.DataSource = excelData
-
-    End Sub
-
-    ''' <summary>
-    ''' リソースID設定なしロード
-    ''' </summary>
-    ''' <param name="sender"></param>
-    ''' <param name="e"></param>
-    Private Sub LoadNoID_Click(sender As Object, e As EventArgs) Handles LoadNoID.Click
-        ' DataGridViewに設定
-        Me.DataGridView1.DataSource = Me.getExcel("dummy.xlsx", "target")
-    End Sub
+        Return excelData
+    End Function
 
     ''' <summary>
     ''' Excelファイルのシートを読み込む
@@ -127,4 +153,38 @@ Public Class Form1
         Return result
     End Function
 
+    Public Function saveExcel(ByVal fileName As String, ByVal sheetName As String, ByVal src As DataTable, ByVal newFileName As String, ByVal targetColumns As List(Of String)) As Boolean
+        ' xlsx読み込み
+        Using book As New XLWorkbook(fileName)
+
+            ' targetシート取得
+            Dim target As IXLWorksheet = book.Worksheet(sheetName)
+
+            ' カラム名と列indexの情報
+            Dim columnIndexes As New Dictionary(Of String, Integer)
+
+            ' カラム名の取得
+            For Each column As IXLColumn In target.Columns()
+                Dim columnName As String = target.Cell(1, column.ColumnNumber).GetString()
+                If Not String.IsNullOrEmpty(columnName) Then
+                    ' カラム名と列indexの情報を格納
+                    columnIndexes.Add(columnName, column.ColumnNumber)
+                End If
+            Next
+
+            ' データ行を取得
+            For Each row As IXLRow In target.Rows(2, target.Rows().LongCount)
+                Dim srcIndex As Integer = row.RowNumber - 2
+
+                Dim srcRow As DataRow = src(srcIndex)
+                For Each columnName As String In targetColumns
+                    row.Cell(columnIndexes(columnName)).Value = srcRow(columnName)
+                Next
+            Next
+
+            book.SaveAs(newFileName)
+        End Using
+
+        Return True
+    End Function
 End Class
