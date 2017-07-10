@@ -50,54 +50,30 @@ Public Class Form1
     Private Function setResouceId(ByVal src As DataTable) As DataTable
         Dim excelData As DataTable = src.Copy()
 
-        ' プロジェクト名とリソースIDのプレフィックス
-        Dim projects As New Dictionary(Of String, String) From {{"ExeProject", "E"},
-                                                                {"WinMultiLanguageTest", "W"}}
-        ' プロジェクト名ごとの画面IDのカウント
-        Dim projectCount As New Dictionary(Of String, Integer)
-
-        ' プロジェクトID+画面名の画面ID
-        Dim screens As New Dictionary(Of String, Integer)
+        Dim projUtil As New ProjectsUtility()
 
         ' プロジェクトID+画面名ごとのプロパティのカウント
         Dim properties As New Dictionary(Of String, Integer)
 
-        ' 初期値設定
-        For Each projectId As String In projects.Values
-            projectCount.Add(projectId, 1)
-        Next
-
-        ' 複数の画面名を同一画面として扱う設定
-        Dim convertScreenNames As New Dictionary(Of String, String)()
-        convertScreenNames.Add("WMainForm", "WForm1") ' サンプルとしてMainFormをForm1としてIDを設定する
-
         For Each row As DataRow In excelData.Rows
 
-            ' プロジェクトIDを取得
-            Dim projectId As String = projects(row("プロジェクト"))
-
-            ' 複数の画面名を同一画面として扱うか確認と設定
-            Dim screenKey As String = projectId & row("画面名")
-            If convertScreenNames.Keys.Contains(screenKey) Then
-                screenKey = convertScreenNames(screenKey)
-            End If
-
-            ' 画面名の設定確認と初期値設定
-            If Not screens.Keys.Contains(screenKey) Then
-                screens.Add(screenKey, projectCount(projectId))
-                projectCount(projectId) = projectCount(projectId) + 1
-                properties.Add(screenKey, 0)
-            End If
-
             ' 画面IDを取得
-            Dim screenId As String = String.Format("{0:0000}", screens(screenKey))
+            Dim screenId As String = projUtil.GetScreenId(row("プロジェクト"), row("画面名"))
+            If String.IsNullOrEmpty(screenId) Then
+                Continue For
+            End If
+
+            ' 画面ごとのプロパティ最終番号がない場合は追加
+            If Not properties.ContainsKey(screenId) Then
+                properties.Add(screenId, 0)
+            End If
 
             ' コントロールIDを取得
-            Dim propertyId As String = String.Format("P{0:0000}", properties(screenKey))
-            properties(screenKey) = properties(screenKey) + 1
+            Dim propertyId As String = String.Format("P{0:0000}", properties(screenId))
+            properties(screenId) = properties(screenId) + 1
 
             ' リソースIDの設定
-            row("リソースID") = projectId & screenId & propertyId
+            row("リソースID") = screenId & propertyId
         Next
 
         Return excelData
